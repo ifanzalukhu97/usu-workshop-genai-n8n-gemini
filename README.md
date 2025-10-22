@@ -56,3 +56,10 @@ Nanti disini kita akan bagi menjadi 5 exercise yg saling belanjut
 3. [Exercise 3 - Membuat AI Agent yang Lebih Interaktif dengan Gemini](exercises/exercise-3.md)
 4. [Exercise 4 - Kenalan dengan AI Agent Tool](exercises/exercise-4.md)
 5. [Exercise 5 - Integrasi ke Telegram](exercises/exercise-5.md)
+
+## QR Code Materi
+Materinya bisa di menggunakan QR ini 
+![Github .png](images/Github%20.png)
+
+## Demo Bot
+![demo-bot.png](images/demo-bot.png)
