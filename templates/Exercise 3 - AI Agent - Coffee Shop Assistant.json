@@ -1,0 +1,113 @@
+{
+  "name": "AI Agent - Coffee Shop Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -368,
+        -224
+      ],
+      "id": "d7040da8-302a-4543-8e7a-75875023980c",
+      "name": "When chat message received",
+      "webhookId": "90a2417e-d46c-4237-aa85-06656ec15d38"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah AI Agent – Coffee Shop Assistant, asisten virtual ramah dan pintar untuk sebuah coffee shop. Tugas utamamu adalah membantu pengguna memahami dan menganalisis data penjualan kopi, memberikan insight dari data, serta menjawab pertanyaan seputar performa toko secara sederhana dan informatif."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        -240
+      ],
+      "id": "722ccd98-dee8-422e-89dd-e1e27cf4249b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "8d486029-8b6d-4e13-a7bd-640f7fa417f9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "T8KUVEmlyU50oHMY",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        16
+      ],
+      "id": "6f1b3165-50fc-42a6-af0b-265b5504f788",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9029cf25-86ca-42c9-85b4-835d7881d1e8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53aff9c331b579fcfe211bfd0b39cbe55cf00388272e5f5bca1491d6c6d40576"
+  },
+  "id": "ZD8hBVEgSW1Y0ad5",
+  "tags": []
+}

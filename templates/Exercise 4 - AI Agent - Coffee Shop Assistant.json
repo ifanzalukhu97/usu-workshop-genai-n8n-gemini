@@ -1,0 +1,217 @@
+{
+  "name": "AI Agent - Coffee Shop Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        -144
+      ],
+      "id": "c70616f9-496d-4186-bf58-cb9efdd5eb4f",
+      "name": "When chat message received",
+      "webhookId": "90a2417e-d46c-4237-aa85-06656ec15d38"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah AI Agent – Coffee Shop Assistant, asisten virtual ramah dan pintar untuk sebuah coffee shop. Tugas utamamu adalah membantu pengguna memahami dan menganalisis data penjualan kopi, memberikan insight dari data, serta menjawab pertanyaan seputar performa toko secara sederhana dan informatif.\n\nUntuk menjalankan tugasmu, kamu memiliki 3 tools utama:\n1. List Tables : Digunakan untuk memeriksa atau mengetahui tabel apa saja yang tersedia di dalam database.\n2. Get Table Schema : Digunakan untuk melihat struktur tabel tertentu, termasuk daftar kolom yang ada di dalamnya.\n3. Execute Select Query : Digunakan untuk menjalankan query dan mengambil data yang dibutuhkan agar kamu bisa menjawab pertanyaan pengguna dengan akurat."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        -144
+      ],
+      "id": "98a8b101-7192-4f3d-9856-cb71a7a3c3d3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        80
+      ],
+      "id": "bcf79ae5-946c-41b7-a45c-47c7dceeb673",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "T8KUVEmlyU50oHMY",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        80
+      ],
+      "id": "38420700-3bcb-4083-be2d-6eee2950f6d0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Select list table from Postgres. Gunakan tool ini untuk mengecek / mengetahui di table database ada column apa saja.",
+        "operation": "executeQuery",
+        "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        -80,
+        80
+      ],
+      "id": "bdf690e0-1e53-49d2-a4f7-03c73f9ad6ff",
+      "name": "List Tables",
+      "credentials": {
+        "postgres": {
+          "id": "NHiyw4olJGfwtskE",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Select table shema from Postgres. Gunakan tool ini untuk mengecek / mengetahui di table kita ada column apa saja",
+        "operation": "executeQuery",
+        "query": "SELECT column_name FROM information_schema.columns WHERE table_name = $1",
+        "options": {
+          "queryReplacement": "={{ $fromAI('tableName', `The name of the table`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        80,
+        96
+      ],
+      "id": "223e032a-de4b-4b43-88c5-16e933244155",
+      "name": "Get Table Schema",
+      "credentials": {
+        "postgres": {
+          "id": "NHiyw4olJGfwtskE",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Execute a SQL query in Postgres. Gunakan tool ini untuk melakukan query untuk menjawab pertanyaan user",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('query', 'Generate the most appropriate SQL SELECT query based on the context and available data.') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        112
+      ],
+      "id": "fcf8fbd8-bf67-4bef-b956-9f072cbb9ea5",
+      "name": "Execute Select Query",
+      "credentials": {
+        "postgres": {
+          "id": "NHiyw4olJGfwtskE",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Tables": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Table Schema": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Select Query": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f8e9686d-0588-4863-948f-5be5c4763e49",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53aff9c331b579fcfe211bfd0b39cbe55cf00388272e5f5bca1491d6c6d40576"
+  },
+  "id": "ZD8hBVEgSW1Y0ad5",
+  "tags": []
+}
